@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Bosco的博客</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f3e9;
+        }
+
+        header {
+            background-color: #a5a58d;
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h3 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        #time {
+            font-size: 36px;
+            letter-spacing: 3px;
+            margin-left: 20px;
+        }
+
+        #quotes {
+            background-color: #e6dbc7;
+            padding: 20px;
+            font-size: 24px;
+            line-height: 36px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        #articles {
+            padding: 20px;
+        }
+
+        #articles h2 {
+            margin-bottom: 10px;
+        }
+
+        #articles ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #articles li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        #articles li img {
+            width: 100px;
+            height: 70px;
+            margin-right: 10px;
+        }
+
+        #articles li a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        #articles li a:hover {
+            text-decoration: underline;
+        }
+
+#navbar {
+  background-color: #333;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+#navbar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+#navbar li {
+  margin-right: 20px;
+}
+
+#navbar li:last-child {
+  margin-right: 0;
+}
+
+#navbar li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+#navbar li a:hover {
+  text-decoration: underline;
+}
+
+#time {
+  font-size: 18px;
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <h3 style="margin-right: 20px;">Bosco的博客</h3>
+        <div id="time"></div>
+    </header>
+<div id="navbar">
+  <ul>
+    <li><a href="https://bosco163.github.io/">首页</a></li>
+    <li><a href="http://lhygpt.github.io/">我的ChatGPT</a></li>
+    <li><a href="http://lhygpt.github.io/">小工具</a></li>
+    <li><a href="mailto:lhybosco@163.com">联系我</a></li>
+  </ul>
+  <div id="time"></div>
+</div>
+
+    <section id="quotes">
+        <h2>励志名言</h2>
+        <div id="quote"></div>
+    </section>
+    <section id="articles">
+        <h2>最近文章</h2>
+        <ul>
+            <li>
+                <img src="https://picsum.photos/100/70" alt="文章1">
+                <div>
+                    <h3><a href="#">文章 1</a></h3>
+                    <p>暂无</p>
+                </div>
+            </li>
+            <li>
+                <img src="https://picsum.photos/100/70" alt="文章2">
+                <div>
+                    <h3><a href="#">文章 2</a></h3>
+                    <p>暂无</p>
+                </div>
+            </li>
+            <li>
+                <img src="https://picsum.photos/100/70" alt="文章3">
+                <div>
+                    <h3><a href="#">文章 3</</a></h3> <p>暂无</p> </div> </li> <li> <img src="https://picsum.photos/100/70" alt="文章4"> <div> <h3><a href="#">文章 4</a></h3> <p>暂无</p> </div> </li> <li> <img src="https://picsum.photos/100/70" alt="文章5"> <div> <h3><a href="#">文章 5</a></h3> <p>暂无</p> </div> </li> </ul> </section> <script> // 实时时间显示器 function updateTime() { const now = new Date(); const time = now.toLocaleTimeString(); document.getElementById('time').textContent = time; }    setInterval(updateTime, 1000);
+
+    // 励志名言
+    const quotes = [
+        "生命中最大的荣耀不在于从未跌倒，而在于每次跌倒后都能重新站起来。-纳尔逊·曼德拉",
+        "开始的秘密在于停止谈论，开始行动。-华特·迪士尼",
+        "你的时间有限，不要浪费在别人的生活中。-史蒂夫·乔布斯",
+        "如果生活是可以预测的，那它就不会有趣味了。-埃莉诺·罗斯福",
+        "如果你关注你拥有的，你就会拥有更多。如果你关注你没有的，你永远都不会拥有足够。-奥普拉·温弗瑞",
+        "如果你的目标定得过高，失败了，你也会比别人成功。-詹姆斯·卡梅隆"
+    ];
+
+    function showQuote() {
+        const quote = quotes[Math.floor(Math.random() * quotes.length)];
+        let index = 0;
+        const quoteElem = document.getElementById('quote');
+        quoteElem.innerHTML = '';
+        const interval = setInterval(() => {
+            quoteElem.innerHTML += quote[index];
+            index++;
+            if (index === quote.length) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    hideQuote(quoteElem, quote);
+                }, 2000);
+            }
+        }, 20);
+    }
+
+    function hideQuote(quoteElem, quote) {
+        let index = quote.length - 1;
+        const interval = setInterval(() => {
+            quoteElem.innerHTML = quote.slice(0, index);
+            index--;
+            if (index < 0) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    showQuote();
+                }, 1000);
+            }
+        }, 20);
+    }
+
+    showQuote();
+    function updateTime() {
+  const now = new Date();
+  const time = now.toLocaleTimeString();
+  document.getElementById('time').textContent = time;
+}
+setInterval(updateTime, 1000);
+
+</script>
+</body> </html>
