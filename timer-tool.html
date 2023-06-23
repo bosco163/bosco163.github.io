@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>计时器</title>
+    <style>
+      .timer {
+        font-size: 3em;
+        font-weight: bold;
+        text-align: center;
+        margin: 50px auto;
+      }
+
+      button {
+        font-size: 1.2em;
+        font-weight: bold;
+        padding: 10px 20px;
+        margin: 0 10px;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        background-color: #007bff;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="timer">
+      <span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
+    </div>
+    <div style="text-align: center;">
+      <button onclick="startTimer()">开始</button>
+      <button onclick="stopTimer()">停止</button>
+      <button onclick="resetTimer()">重置</button>
+    </div>
+    <script>
+      let timerInterval;
+      let hours = 0;
+      let minutes = 0;
+      let seconds = 0;
+
+      function startTimer() {
+        timerInterval = setInterval(incrementTimer, 1000);
+      }
+
+      function stopTimer() {
+        clearInterval(timerInterval);
+      }
+
+      function resetTimer() {
+        clearInterval(timerInterval);
+        hours = 0;
+        minutes = 0;
+        seconds = 0;
+        updateTimerDisplay();
+      }
+
+      function incrementTimer() {
+        seconds++;
+        if (seconds === 60) {
+          seconds = 0;
+          minutes++;
+          if (minutes === 60) {
+            minutes = 0;
+            hours++;
+          }
+        }
+        updateTimerDisplay();
+      }
+
+      function updateTimerDisplay() {
+        const hoursDisplay = padNumber(hours);
+        const minutesDisplay = padNumber(minutes);
+        const secondsDisplay = padNumber(seconds);
+        document.getElementById("hours").textContent = hoursDisplay;
+        document.getElementById("minutes").textContent = minutesDisplay;
+        document.getElementById("seconds").textContent = secondsDisplay;
+      }
+
+      function padNumber(number) {
+        return number.toString().padStart(2, "0");
+      }
+    </script>
+  </body>
+</html>
