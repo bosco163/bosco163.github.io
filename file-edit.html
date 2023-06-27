@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head runat="server">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta HTTP-EQUIV="pragma" CONTENT="no-cache"/>
+    <meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"/>
+    <meta HTTP-EQUIV="expires" CONTENT="0">
+    <title>Spire.Cloud</title>
+	<style>
+	
+html {
+    height: 100%;
+    width: 100%;
+}
+ 
+body {
+    background: #fff;
+    color: #333;
+    font-family: Arial, Tahoma,sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+    height: 100%;
+    margin: 0;
+    overflow-y: hidden;
+    padding: 0;
+    text-decoration: none;
+}
+iframe {
+    border: none !important;
+}
+ 
+.form {
+    height: 100%;
+}
+ 
+div {
+    margin: 0;
+    padding: 0;
+}
+ 
+	</style>
+</head>
+<body>
+<div class="form">
+    <div id="iframeEditor">
+    </div>
+</div>
+    <script type="text/javascript" src="https://api.e-iceblue.cn/web/editors/spireapi/SpireCloudEditor.js"></script>
+    <script type="text/javascript" language="javascript">
+        var docEditor;
+        var appid = 'your app id';
+        var appkey = 'your app key';
+        var config = {
+    "fileAttrs": {
+    "fileInfo": {
+      "name": "sample.docx",
+      "ext": "docx",
+      "primary": String(new Date().getTime()),//this is key
+      "creator": "Jonn",
+      "createTime": "2022-04-18 11:30:43"
+    },
+    "sourceUrl": "https://cloud.e-iceblue.cn/demo/sample.docx",
+    "createUrl": "",
+    "callbackUrl": "", 
+	/*This item can be empty, but only if the 'onSave' callback function must be defined in events. If the callback function is undefined and this item is empty, Cloud Editor will not provide save function. */
+    "verification": "",
+    "templates": {}
+  },
+  "user": {
+    "id": "uid-1",
+    "name": "Jonn",
+    "canSave": true,
+    "customization" : {
+      "public": { 
+        "common": {
+          "whiteLabel": false,
+          "defaultZoom": 1,
+          "openReviewChanges": false,
+          "viewVersion": false,
+          "tokenValue": "",
+          "permGroups": ["everyone"],
+          "socket_url": "", 
+          "header": {
+            "hideTitle": false,
+            "defaultView": "full"
+          },
+          "goback": { "url" : "" }
+        },
+        "document": null, 
+        "excel":null,
+        "powerpoint":null
+      },
+       "private": { 
+        "token": "", 
+        "appid": "",
+        "appkey": ""
+      }
+    }
+  },
+  "editorAttrs": {
+    "editorMode": "edit",
+    "editorWidth": "100%",
+    "editorHeight": "100%",
+    "editorType": "document", 
+    "platform": "desktop", //desktop， mobile， embedded
+    "viewLanguage": "zh", //en/zh
+    "events": {}
+  }
+};
+        var innerAlert = function (message) {
+            if (console && console.log)
+                console.log(message);
+        };
+ 
+        var onAppReady = function () {
+        };
+ 
+        var onDocumentStateChange = function (event) {
+            var title = document.title.replace(/\*$/g, "");
+            document.title = title + (event.data ? "*" : "");
+        };
+ 
+        var onRequestEditRights = function () {
+            location.href = location.href.replace(RegExp("mode=view\&?", "i"), "");
+        };
+ 
+        var onRequestHistory = function (event) {
+            var historyObj = null;
+ 
+            docEditor.refreshHistory(
+                {
+                    currentVersion: "1",
+                    history: historyObj
+                });
+        };
+ 
+        var onRequestHistoryData = function (data) {
+            var version = data.data;
+            var historyData = null;
+ 
+            docEditor.setHistoryData(historyData[version-1]);
+        };
+ 
+        var onRequestHistoryClose = function (event){
+            document.location.reload();
+        };
+ 
+        var onError = function (event) {
+            if (event)
+                innerAlert(event.data);
+        };
+ 
+        var onOutdatedVersion = function (event) {
+            location.reload(true);
+        };
+        var onDownload = function(props){
+            alert('fileName:'+props.data[0]+'fileUrl:'+props.data[1]);
+            console.log('fileName:'+props.data[0]);
+            console.log('fileUrl:'+props.data[1]);
+        };
+ 
+        var reloadFrame = function(){
+            docEditor.reload();
+        };
+ 
+	 var callbackfn = function (result) {
+            if (result && result.data) {
+                var data = result.data,
+                    fileName = data[0],
+                    url = data[1];
+                if (fileName.indexOf('=') > -1)
+                    fileName = fileName.split('=')[1];
+                var host1 = location.hostname;
+                var host ='';
+                ajax({
+                    url: '',
+                    type: 'post',
+                    data: { 'filename': fileName, 'fileuri': url },
+                    dataType: 'json',
+                    async: false,
+                    success: function (json) {
+                        if (json.code == 200 || json.code == '200') {
+                            alert('保存成功');
+                        } else {
+                            this.error(json, '保存失败');
+                        }
+                    },
+                    error: function (json, msg) {
+                        alert(+msg);
+                    }
+                });
+            }
+        };
+ 
+        var connectEditor = function () {
+            config.editorAttrs.events = {
+                "onReady": onAppReady,
+                "onDocumentStateChange": onDocumentStateChange,
+                'onRequestEditRights': onRequestEditRights,
+                "onError": onError,
+                "onRequestHistory":  onRequestHistory,
+                "onRequestHistoryData": onRequestHistoryData,
+                "onRequestHistoryClose": onRequestHistoryClose,
+                "onOutdatedVersion": onOutdatedVersion,
+                'onSave': callbackfn
+            };
+            docEditor = new SpireCloudEditor.OpenApi('iframeEditor', config,appid,appkey);
+            fixSize();
+        };
+ 
+        var onSaveClick = function () {
+            docEditor.onSaveClick();
+        }
+        var fixSize = function () {
+            var wrapEl = document.getElementsByClassName("form");
+            if (wrapEl.length) {
+                wrapEl[0].style.height = screen.availHeight + "px";
+                window.scrollTo(0, -1);
+                wrapEl[0].style.height = window.innerHeight + "px";
+            }
+        };
+ 
+        if (window.addEventListener) {
+            window.addEventListener("load", connectEditor);
+            window.addEventListener("resize", fixSize);
+        } else if (window.attachEvent) {
+            window.attachEvent("onload", connectEditor);
+            window.attachEvent("onresize", fixSize);
+        }
+		
+    </script>
+</body>
+</html>
